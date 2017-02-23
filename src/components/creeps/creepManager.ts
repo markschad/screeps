@@ -1,13 +1,15 @@
 import * as Config from "../../config/config";
 
+import { roles, RoleConfig } from "./roles/roles";
+
 import * as harvester from "./roles/harvester";
+import * as creator from "./roles/creator";
+import * as worshipper from "./roles/worshipper";
 
 import { log } from "../../components/support/log";
 
 export let creeps: Creep[];
 export let creepCount: number = 0;
-
-export let harvesters: Creep[] = [];
 
 /**
  * Initialization scripts for CreepManager module.
@@ -20,9 +22,27 @@ export function run(room: Room): void {
   _buildMissingCreeps(room);
 
   _.each(creeps, (creep: Creep) => {
-    if (creep.memory.role === "harvester") {
-      harvester.run(creep);
+
+    let role = creep.memory.role;
+    log.info("assigning tasks for creep: " + creep.name + " with role: " + creep.memory.role);
+
+    switch (role) {
+
+      case "harvester":
+        harvester.animate(creep);
+        break;
+
+      case "assembler":
+      case "constructor":
+        creator.animate(creep);
+        break;
+
+      case "worshipper":
+        worshipper.animate(creep);
+        break;
+
     }
+
   });
 }
 
@@ -35,9 +55,6 @@ function _loadCreeps(room: Room) {
   creeps = room.find<Creep>(FIND_MY_CREEPS);
   creepCount = _.size(creeps);
 
-  // Iterate through each creep and push them into the role array.
-  harvesters = _.filter(creeps, (creep) => creep.memory.role === "harvester");
-
   if (Config.ENABLE_DEBUG_MODE) {
     log.info(creepCount + " creeps found in the playground.");
   }
@@ -49,7 +66,6 @@ function _loadCreeps(room: Room) {
  * @param {Room} room
  */
 function _buildMissingCreeps(room: Room) {
-  let bodyParts: string[];
 
   let spawns: Spawn[] = room.find<Spawn>(FIND_MY_SPAWNS, {
     filter: (spawn: Spawn) => {
@@ -63,18 +79,24 @@ function _buildMissingCreeps(room: Room) {
     }
   }
 
-  if (harvesters.length < 2) {
-    if (harvesters.length < 1 || room.energyCapacityAvailable <= 800) {
-      bodyParts = [WORK, WORK, CARRY, MOVE];
-    } else if (room.energyCapacityAvailable > 800) {
-      bodyParts = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE];
+  for (let name in roles) {
+
+    let role: RoleConfig = roles[name];
+
+    let population: Array<Creep> = _.filter(creeps,
+      (creep) => creep.memory.role === name
+    );
+
+    if (population.length < role.populationCap) {
+      _.each(spawns, (spawn: Spawn) => {
+        _spawnCreep(spawn, name, role);
+      });
     }
 
-    _.each(spawns, (spawn: Spawn) => {
-      _spawnCreep(spawn, bodyParts, "harvester");
-    });
   }
+
 }
+
 
 /**
  * Spawns a new creep.
@@ -84,26 +106,29 @@ function _buildMissingCreeps(room: Room) {
  * @param {string} role
  * @returns
  */
-function _spawnCreep(spawn: Spawn, bodyParts: string[], role: string) {
+function _spawnCreep(spawn: Spawn, name: string, role: RoleConfig) {
   let uuid: number = Memory.uuid;
+
+  let bodyParts: string[] = role.body;
+
   let status: number | string = spawn.canCreateCreep(bodyParts, undefined);
 
-  let properties: { [key: string]: any } = {
-    role,
+  let mem: { [key: string]: any } = {
+    role: name,
     room: spawn.room.name,
   };
 
   status = _.isString(status) ? OK : status;
   if (status === OK) {
     Memory.uuid = uuid + 1;
-    let creepName: string = spawn.room.name + " - " + role + uuid;
+    let creepName: string = spawn.room.name + " - " + name + uuid;
 
     log.info("Started creating new creep: " + creepName);
     if (Config.ENABLE_DEBUG_MODE) {
       log.info("Body: " + bodyParts);
     }
 
-    status = spawn.createCreep(bodyParts, creepName, properties);
+    status = spawn.createCreep(bodyParts, creepName, mem);
 
     return _.isString(status) ? OK : status;
   } else {

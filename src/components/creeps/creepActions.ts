@@ -83,7 +83,6 @@ export function getEnergy(creep: Creep, roomObject: RoomObject): void {
  */
 export function canWork(creep: Creep): boolean {
   let working = creep.memory.working;
-
   if (working && _.sum(creep.carry) === 0) {
     creep.memory.working = false;
     return false;
@@ -94,3 +93,4 @@ export function canWork(creep: Creep): boolean {
     return creep.memory.working;
   }
 }
+
