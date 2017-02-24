@@ -1,5 +1,7 @@
 import * as Config from "../../config/config";
 
+import { log } from "../support/log";
+
 /**
  * Shorthand method for `Creep.moveTo()`.
  *
@@ -84,9 +86,11 @@ export function getEnergy(creep: Creep, roomObject: RoomObject): void {
 export function canWork(creep: Creep): boolean {
   let working = creep.memory.working;
   if (working && _.sum(creep.carry) === 0) {
+    log.info(creep.name + " is now ready to work.");
     creep.memory.working = false;
     return false;
   } else if (!working && _.sum(creep.carry) === creep.carryCapacity) {
+    log.info(creep.name + " can no longer work.");
     creep.memory.working = true;
     return true;
   } else {

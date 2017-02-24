@@ -24,20 +24,22 @@ export function run(room: Room): void {
   _.each(creeps, (creep: Creep) => {
 
     let role = creep.memory.role;
-    log.info("assigning tasks for creep: " + creep.name + " with role: " + creep.memory.role);
 
     switch (role) {
 
       case "harvester":
+        log.info(creep.memory.role + "-> harvester.animate");
         harvester.animate(creep);
         break;
 
       case "assembler":
       case "constructor":
+        log.info(creep.memory.role + "-> creator.animate");
         creator.animate(creep);
         break;
 
       case "worshipper":
+        log.info(creep.memory.role + "-> worshipper.animate");
         worshipper.animate(creep);
         break;
 

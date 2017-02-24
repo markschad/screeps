@@ -12,7 +12,7 @@ import { log } from "../../support/log";
  */
 export function animate(creep: Creep): void {
 
-  let targetSite: ConstructionSite = creep.room.find<ConstructionSite>(FIND_CONSTRUCTION_SITES)[0];
+  let targetSite: ConstructionSite = creep.pos.findClosestByPath<ConstructionSite>(FIND_CONSTRUCTION_SITES);
   // Fall back to the harvester role if there are no construction sites.
   if (targetSite === undefined) {
     log.debug("No constructions sites.");
@@ -21,16 +21,15 @@ export function animate(creep: Creep): void {
 
   let spawn = creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
 
-  let energySource = creep.room.find<Source>(FIND_SOURCES_ACTIVE)[0];
-
   if (creepActions.needsRenew(creep)) {
     creepActions.moveToRenew(creep, spawn);
   }
   else if (creepActions.canWork(creep)) {
     log.info("Moving to build.");
-    _moveToBuild(creep, targetSite)
+    _moveToBuild(creep, targetSite);
   } else {
     log.info("Moving to harvest.");
+    let energySource = creep.pos.findClosestByPath<Source>(FIND_SOURCES_ACTIVE);
     _moveToHarvest(creep, energySource);
   }
 }

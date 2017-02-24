@@ -7,7 +7,7 @@ export interface RoleConfig {
 export const roles: {[name: string]: RoleConfig} = {
 
   "harvester": {
-    populationCap: 1,
+    populationCap: 2,
     priority: 100,
     body: [ WORK, WORK, CARRY, MOVE ]
   },
