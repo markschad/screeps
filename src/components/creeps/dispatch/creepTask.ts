@@ -1,21 +1,29 @@
+import { RoutinePlan } from "./routine";
+
 
 /**
  * Represents a task to be performed by a creep.
  */
 export interface CreepTask {
-  routine: string[];
+  routines: RoutinePlan[];
   prereq: {
-    body: BodyConfig;
+    body?: BodyConfig;
   };
 };
+
+/**
+ * Creates a new creep task.
+ */
+export const creepTaskFactory = (routines: RoutinePlan[], prereq?: { body: BodyConfig }) => {
+  return { routines: routines, prereq: prereq || { } }
+}
 
 /**
  * Represents the current task state, either working or done.
  */
 export enum CreepTaskState {
-  Planning,
-  Working,
-  Done
+  Idle,
+  Working
 }
 
 /**
@@ -23,7 +31,6 @@ export enum CreepTaskState {
  */
 export interface CreepTaskMemory {
   state: CreepTaskState;
-  positions: { [name: string]: RoomPosition}
 }
 
 /**
@@ -65,8 +72,7 @@ export const isCompatible = (bodyConfig: BodyConfig, task: CreepTask) => {
 export const getCreepTaskMemory = (creep: Creep): CreepTaskMemory => {
 
   return creep.memory.task || {
-    state: CreepTaskState.Done,
-    positions: []
+    state: CreepTaskState.Idle
   }
 
 }

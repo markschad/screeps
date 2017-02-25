@@ -5,13 +5,14 @@ import {
 } from "../routine";
 import * as memoryHelper from "../../../common/memoryHelper";
 
+import * as energyHelper from "../../../common/energy";
 
 /**
  * Represents the portion of memory dedicated to the gatherUntilFullRoutine.
  */
-export interface GatherUntilFullRoutineOptions {
+export interface StoreEnergyRoutineOptions {
   nearestTo?: memoryHelper.RoomPositionMemory;
-  energySourceId: string;
+  energyStoreId?: string
 }
 
 /**
@@ -21,22 +22,22 @@ export const start = (creep: Creep) => {
 
   let routineMemory = getRoutineMemory(creep);
   let currentRoutineMemory = routineMemory.routines[0];
-  let options = currentRoutineMemory.options as GatherUntilFullRoutineOptions;
+  let options = currentRoutineMemory.options as StoreEnergyRoutineOptions;
 
-  let energySourceId = options.energySourceId;
+  let energyStoreId = options.energyStoreId;
 
-  if (!energySourceId) {
-    // Find the nearest energy source to the option "nearestTo" or this
+  if (!energyStoreId) {
+    // Find the nearest energy store to the option "nearestTo" or this
     // creeps position.
     let nearestTo: RoomPosition =
       memoryHelper.toRoomPosition(options.nearestTo) ||
       creep.pos;
-    let energySource = nearestTo.findClosestByPath<Source>(FIND_SOURCES_ACTIVE);
-    energySourceId = energySource.id;
+    let energyStore = energyHelper.findNearestFillableEnergyStore(nearestTo) as energyHelper.EnergyStore;
+    energyStoreId = energyStore.id;
   }
 
   // Store the energy source id so we don't have to calculate it again.
-  routineMemory.cache.energySourceId = energySourceId;
+  routineMemory.cache.energyStoreId = energyStoreId;
 
 }
 
@@ -49,26 +50,26 @@ export const execute = (creep: Creep) => {
     let routineMemory = getRoutineMemory(creep);
 
     // Get the memory source from memory.
-    let source = Game.getObjectById(routineMemory.cache.energySourceId) as Source;
+    let store = Game.getObjectById(routineMemory.cache.energyStoreId) as energyHelper.EnergyStore;
 
-    // Attempt to harvest the source.
-    let tryHarvest = creep.harvest(source);
+    // Attempt to store the energy.
+    let tryStore = creep.transfer(store, RESOURCE_ENERGY);
 
     // Handle errors.
-    switch (tryHarvest) {
+    switch (tryStore) {
 
-      // Move towards the source if we are out-of-range.
+      // Move towards the energy store if we are out-of-range.
       case ERR_NOT_IN_RANGE:
-        creep.moveTo(source);
+        creep.moveTo(store);
         break;
 
-      // Complete the routine if we are full.
-      case ERR_FULL:
+      // Complete the routine if we are empty.
+      case ERR_NOT_ENOUGH_RESOURCES:
         routineMemory.state = RoutineState.Done;
         break;
 
       default:
-        log.info(creep.name + ":gatherUntilFull - Unhandled error: " + tryHarvest);
+        log.info(creep.name + ":storeEnergy - Unhandled error: " + tryStore);
         break;
 
     }
