@@ -15,27 +15,33 @@ export const run = (room: Room) => {
   // If the number of interactions is less than the calculated max, add a new task.
   if (canEnqueue) {
 
-    let plan = [
-      {
-        name: "withdrawEnergy",
-        options: {},
-      },
-      {
-        name: "upgradeController",
-        options: {},
-      },
-    ];
-
-    let prereq: { body: creepTask.BodyConfig } = { body: {} };
-    prereq.body[CARRY] = 1;
-    prereq.body[MOVE] = 1;
-    prereq.body[WORK] = 1;
-
-    let interactions: creepTask.CreepTaskInteractions = {};
-
-    let task = creepTask.creepTaskFactory(plan, interactions, TASK_NAME, prereq);
+    let task = upgradeControllerTaskFactory();
     creepTaskQueue.enqueuePending(room, task);
 
   }
 
-}
+};
+
+export const upgradeControllerTaskFactory = (): creepTask.CreepTask => {
+
+  let plan = [
+    {
+      name: "withdrawEnergy",
+      options: {},
+    },
+    {
+      name: "upgradeController",
+      options: {},
+    },
+  ];
+
+  let prereq: { body: creepTask.BodyConfig } = { body: {} };
+  prereq.body[CARRY] = 1;
+  prereq.body[MOVE] = 1;
+  prereq.body[WORK] = 1;
+
+  let interactions: creepTask.CreepTaskInteractions = {};
+
+  return creepTask.creepTaskFactory(plan, interactions, TASK_NAME, prereq);
+
+};

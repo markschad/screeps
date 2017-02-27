@@ -1,6 +1,7 @@
 import * as _construct from "./construct";
 import * as _fillEnergyStore from "./fillEnergyStore";
-import * as _upgradeController from "./upgradeController";
+// import * as _upgradeController from "./upgradeController";
+import * as _fillExtension from "./fillExtension";
 
 
 export interface Profiler {
@@ -9,10 +10,12 @@ export interface Profiler {
 
 export const profiles: { [name: string]: Profiler } = {
 
-  construct: _construct as Profiler,
+  construct: _construct,
 
-  fillEnergyStore: _fillEnergyStore as Profiler,
+  fillEnergyStore: _fillEnergyStore,
 
-  upgradeCotnroller: _upgradeController as Profiler,
+  fillExtension: _fillExtension,
+
+  // upgradeCotnroller: _upgradeController,
 
 };

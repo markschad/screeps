@@ -45,7 +45,10 @@ export function loop() {
 
   memoryHelper.checkMemory();
 
-  profiler.run();
+  // Run profilers every 5 ticks.
+  if (profiler.throttle(5)) {
+    profiler.run();
+  }
 
   // Dispatch all creeps.
   for (let name in Game.creeps) {

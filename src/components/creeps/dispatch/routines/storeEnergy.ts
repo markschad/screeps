@@ -85,7 +85,7 @@ export const execute = (creep: Creep): RoutineState => {
       break;
   }
 
-  if (creep.carry[RESOURCE_ENERGY] === 0) {
+  if (creep.carry[RESOURCE_ENERGY] === 0 || store.energy === store.energyCapacity) {
     return RoutineState.Done;
   }
 

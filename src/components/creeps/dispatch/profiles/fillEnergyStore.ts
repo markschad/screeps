@@ -1,6 +1,6 @@
 import { log } from "../../../support/log";
 
-import * as energyHelper from "../../../common/energy";
+import * as energyHelper from "../../../common/energyHelper";
 import * as interactionsHelper from "../../../common/interactions";
 import * as creepTask from "../creepTask";
 import * as creepTaskQueue from "../creepTaskQueue";
@@ -12,7 +12,9 @@ const MAX_INTERACTIONS = 1;
 
 export const run = (room: Room) => {
 
-  let stores = energyHelper.findFillableEnergyStore(room);
+  let stores = room.find(FIND_MY_STRUCTURES, {
+    filter: energyHelper.isFillableEnergyStore,
+  });
 
   log.debug("Num fillable energy stores: " + stores.length);
 
@@ -52,9 +54,9 @@ export const run = (room: Room) => {
       interactions[store.id] = [ "storeEnergy" ];
 
       let prereq: { body: creepTask.BodyConfig } = { body: {} };
-      prereq.body[CARRY] = 1;
+      prereq.body[CARRY] = 2;
       prereq.body[MOVE] = 1;
-      prereq.body[WORK] = 1;
+      prereq.body[WORK] = 2;
 
       let fillEnergyStoreTask = creepTask.creepTaskFactory(plan, interactions, TASK_NAME, prereq);
 
@@ -66,4 +68,4 @@ export const run = (room: Room) => {
 
   });
 
-}
+};

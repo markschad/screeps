@@ -1,12 +1,13 @@
 import * as interactionsHelper from "../../../common/interactions";
 import * as creepTask from "../creepTask";
 import * as creepTaskQueue from "../creepTaskQueue";
-import * as memoryHelepr from "../../../common/memoryHelper";
+// import * as memoryHelepr from "../../../common/memoryHelper";
+import * as energyHelper from "../../../common/energyHelper";
 
 // Max interactions increases by one for
 const RESOURCE_INTERACTION_STEP = 500;
 const TASK_NAME = "construct";
-const MAX_TASKS = 3;
+const MAX_TASKS = 2;
 
 export const run = (room: Room) => {
 
@@ -28,13 +29,33 @@ export const run = (room: Room) => {
     // If the number of interactions is less than the calculated max, add a new task.
     if (canEnqueue) {
 
-      let plan = [
-        {
+      let getEnergyRoutine: {
+        name: string;
+        options: {};
+      };
+      let energyStore = site.pos.findClosestByRange<energyHelper.EnergyStore>(FIND_MY_STRUCTURES, {
+        filter: energyHelper.isEnergyStoreWithEnergy,
+      });
+      let energySource = site.pos.findClosestByRange<Source>(FIND_SOURCES_ACTIVE);
+      if (energyStore && site.pos.getRangeTo(energyStore) < site.pos.getRangeTo(energySource)) {
+        getEnergyRoutine = {
           name: "withdrawEnergy",
           options: {
-            nearestTo: memoryHelepr.toRoomPositionMemory(site.pos),
+            energyStoreId: energyStore.id,
           },
-        },
+        };
+      } else {
+        getEnergyRoutine = {
+          name: "gatherUntilFull",
+          options: {
+            energySourceId: energySource.id,
+          },
+        };
+      }
+
+
+      let plan = [
+        getEnergyRoutine,
         {
           name: "construct",
           options: {

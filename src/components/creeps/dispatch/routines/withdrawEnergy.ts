@@ -67,6 +67,11 @@ export const execute = (creep: Creep): RoutineState => {
     return routineMemory.state = RoutineState.Done;
   }
 
+  // If the store has no energy, finish the task.
+  if (store.energy === 0) {
+    return routineMemory.state = RoutineState.Done;
+  }
+
   // Attempt to retrieve the energy.
   let tryWithdraw = creep.withdraw(store, RESOURCE_ENERGY);
 

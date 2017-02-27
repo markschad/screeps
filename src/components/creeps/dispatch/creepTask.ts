@@ -84,13 +84,13 @@ export interface BodyConfig {
 export const isCompatible = (bodyConfig: BodyConfig, task: CreepTask) => {
 
   // Return true if there is no body prerequisite.
-  if (task.prereq.body === undefined) {
+  if (!task.prereq.body) {
     return true;
   }
 
   // If any body part does not meet the requirement of the task, return false.
   for (let bodyPart in bodyConfig) {
-    if (task.prereq.body[bodyPart] !== undefined &&
+    if (task.prereq.body[bodyPart] &&
     task.prereq.body[bodyPart] > bodyConfig[bodyPart]) {
       return false;
     }
