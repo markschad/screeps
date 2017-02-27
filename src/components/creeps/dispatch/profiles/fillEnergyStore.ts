@@ -54,9 +54,9 @@ export const run = (room: Room) => {
       interactions[store.id] = [ "storeEnergy" ];
 
       let prereq: { body: creepTask.BodyConfig } = { body: {} };
-      prereq.body[CARRY] = 2;
+      prereq.body[CARRY] = 1;
       prereq.body[MOVE] = 1;
-      prereq.body[WORK] = 2;
+      prereq.body[WORK] = 1;
 
       let fillEnergyStoreTask = creepTask.creepTaskFactory(plan, interactions, TASK_NAME, prereq);
 

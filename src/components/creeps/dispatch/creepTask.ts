@@ -120,8 +120,8 @@ export const getCreepTaskMemory = (creep: Creep): CreepTaskMemory => {
  */
 export const getBodyConfig = (creep: Creep): BodyConfig => {
   let parts: BodyConfig = {};
-  _.each(creep.body, (part: number) => {
-    parts[part] = (parts[part] || 0) + 1;
+  _.each(creep.body, (part: { type: string }) => {
+    parts[part.type] = (parts[part.type] || 0) + 1;
   });
   return parts;
 };

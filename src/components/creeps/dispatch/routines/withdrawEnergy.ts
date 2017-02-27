@@ -4,7 +4,7 @@ import {
   getRoutineMemory
 } from "../routine";
 import * as memoryHelper from "../../../common/memoryHelper";
-import * as energyHelper from "../../../common/energy";
+import * as energyHelper from "../../../common/energyHelper";
 
 import * as pathing from "../../pathing";
 
@@ -34,7 +34,9 @@ export const start = (creep: Creep) => {
       // Find the nearest energy store to the option "nearestTo" or this
       // creeps position.
       let nearestTo = memoryHelper.toRoomPosition(options.nearestTo) || creep.pos;
-      energyStore = energyHelper.findNearestEnergyStoreWithEnergy(nearestTo, 50);
+      energyStore = nearestTo.findClosestByPath<energyHelper.EnergyStore>(FIND_STRUCTURES, {
+        filter: energyHelper.isEnergyStoreWithEnergy,
+      });
       if (!energyStore) {
         return;
       }
@@ -68,7 +70,7 @@ export const execute = (creep: Creep): RoutineState => {
   }
 
   // If the store has no energy, finish the task.
-  if (store.energy === 0) {
+  if (store.store[RESOURCE_ENERGY] === 0) {
     return routineMemory.state = RoutineState.Done;
   }
 

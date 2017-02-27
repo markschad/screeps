@@ -60,22 +60,17 @@ export function loop() {
     let room: Room = Game.rooms[i];
 
     // CreepManager.run(room);
-
     recruiter.run(room);
 
     memoryHelper.cleanupMemory();
     dispatcher.cleanupMemory();
 
-    // Clears any non-existing creep memory.
-    for (let name in Memory.creeps) {
-      let creep: any = Memory.creeps[name];
-
-      if (creep.room === room.name) {
-        if (!Game.creeps[name]) {
-          log.info("Clearing non-existing creep memory:", name);
-          delete Memory.creeps[name];
-        }
-      }
+  }
+  // Clears any non-existing creep memory.
+  for (let name in Memory.creeps) {
+    if (!Game.creeps[name]) {
+      log.info("Clearing non-existing creep memory:", name);
+      delete Memory.creeps[name];
     }
   }
 }

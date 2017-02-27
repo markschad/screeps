@@ -23,14 +23,16 @@ export const run = (room: Room) => {
 
   let queue = creepTaskQueue.getQueue(room);
   let queueLen = queue.length;
-  let maxRecruits = Math.min(queueLen, spawns.length);
 
-  for (let i = 0; i < maxRecruits; i++) {
+  let queueIndex = 0;
+  let spawnIndex = 0;
 
-    let task = queue[i];
+  while (queueIndex < queueLen && spawnIndex < spawnsLen) {
+
+    let task = queue[queueIndex++];
     let body: string[] | null = null;
 
-    let spawn = spawns[i];
+    let spawn = spawns[spawnIndex];
 
     let uuid = Memory.uuid++;
     let creepName: string = spawn.room.name + ":creep" + uuid;
@@ -39,22 +41,24 @@ export const run = (room: Room) => {
       let possibleBody: string[];
       if (task.prereq.body) {
         possibleBody = creepTask.toBody(task.prereq.body, multiplier);
-        log.debug("possibleBody length " + possibleBody);
       } else {
-        possibleBody = [ CARRY, CARRY, MOVE, MOVE, WORK, WORK ]; // Basic utility.
+        possibleBody = [ CARRY, MOVE, WORK ]; // Basic utility.
       }
-      if (spawn.canCreateCreep(possibleBody, creepName) === OK) {
+      if (!spawn.canCreateCreep(possibleBody, creepName)) {
         body = possibleBody;
         break;
-      } else {
-        log.debug("can't create");
       }
     }
 
     if (body) {
       log.debug("creating.");
       let result = spawn.createCreep(body, creepName, {});
-      log.debug("createCreep result " + result);
+      if (!result) {
+        spawnIndex++;
+        log.debug("createCreep result " + result);
+      }
+    } else {
+      log.debug("Can't create creep for task " + task.name);
     }
 
   }

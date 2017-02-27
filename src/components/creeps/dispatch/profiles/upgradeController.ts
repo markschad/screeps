@@ -9,8 +9,8 @@ const MAX_TASKS = 1;
 
 export const run = (room: Room) => {
 
-  let canEnqueue = creepTaskQueue.getQueue(room).length + creepTaskQueue.getAssigned(room).length < MAX_TASKS;
-  // let canEnqueue = creepTaskQueue.getNumQueuedOrActiveWithName(room, TASK_NAME) < MAX_TASKS;
+  // let canEnqueue = creepTaskQueue.getQueue(room).length + creepTaskQueue.getAssigned(room).length < MAX_TASKS;
+  let canEnqueue = creepTaskQueue.getNumQueuedOrActiveWithName(room, TASK_NAME) < MAX_TASKS;
 
   // If the number of interactions is less than the calculated max, add a new task.
   if (canEnqueue) {

@@ -4,7 +4,7 @@ import * as creepTask from "./creepTask";
 import * as creepTaskQueue from "./creepTaskQueue";
 import * as routine from "./routine";
 
-import * as upgradeController from "./profiles/upgradeController";
+// import * as upgradeController from "./profiles/upgradeController";
 
 /**
  * Dispatches the given creep, assigning it a new task if it is idle.
@@ -24,20 +24,20 @@ export const run = (creep: Creep): void => {
     if (task) {
       log.debug("Assigning task to creep " + creep.name);
       creepTaskQueue.moveTaskToAssigned(task, creep.room);
+
+      creepTaskMemory.task = task;
+      task.assignedTo = creep.name;
+      creepTaskMemory.currentRoutine = 0;
+      creepTaskMemory.state = creepTask.CreepTaskState.Working;
+
+      routine.setCurrentRoutineMemory(creep, task.routines[creepTaskMemory.currentRoutine]);
+      creepTask.registerInteractions(task);
+      creepTask.startRoutine(creep);
+
     } else {
-      task = upgradeController.upgradeControllerTaskFactory();
-      creepTaskQueue.getAssigned(creep.room).push(task);
+      // task = upgradeController.upgradeControllerTaskFactory();
+      // creepTaskQueue.getAssigned(creep.room).push(task);
     }
-
-    creepTaskMemory.task = task;
-    task.assignedTo = creep.name;
-    creepTaskMemory.currentRoutine = 0;
-    creepTaskMemory.state = creepTask.CreepTaskState.Working;
-
-    routine.setCurrentRoutineMemory(creep, task.routines[creepTaskMemory.currentRoutine]);
-    creepTask.registerInteractions(task);
-    creepTask.startRoutine(creep);
-
   }
 
     // Execute the task for the creep if has a task.
