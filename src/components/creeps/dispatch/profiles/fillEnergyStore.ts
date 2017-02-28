@@ -7,12 +7,12 @@ import * as creepTaskQueue from "../creepTaskQueue";
 import * as memoryHelper from "../../../common/memoryHelper";
 
 const TASK_NAME = "fillEnergyStore";
-const MAX_TASKS = 3;
+const MAX_TASKS = 2;
 const MAX_INTERACTIONS = 1;
 
 export const run = (room: Room) => {
 
-  let stores = room.find(FIND_MY_STRUCTURES, {
+  let stores = room.find(FIND_STRUCTURES, {
     filter: energyHelper.isFillableEnergyStore,
   });
 
@@ -69,3 +69,23 @@ export const run = (room: Room) => {
   });
 
 };
+
+/**
+ * Attempts to renew the current task for the given
+ */
+export const renew = (creep: Creep) => {
+
+  let taskMemory = creepTask.getCreepTaskMemory(creep);
+  let task = taskMemory.task as creepTask.CreepTask;
+  let energyStoreId: string = task.routines[1].options.energyStoreId;
+  let energyStore = Game.getObjectById<energyHelper.EnergyStore>(energyStoreId);
+
+  // If the energy store is not full, renew the task.
+  if (energyStore && energyHelper.isFillableEnergyStore(energyStore)) {
+    return true;
+  }
+
+  return false;
+
+};
+

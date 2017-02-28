@@ -2,7 +2,7 @@ import {
   CreepTask,
   BodyConfig,
   isCompatible,
-  getBodyConfig
+  getBodyConfig,
 } from "./creepTask";
 
 /**
@@ -30,7 +30,7 @@ export const getNumQueuedOrActiveWithName = (room: Room, name: string) => {
 export const enqueuePending = (room: Room, task: CreepTask) => {
   let queue = getQueue(room);
   queue.push(task);
-}
+};
 
 /**
  * Returns the next available, compatible task for the given
@@ -61,8 +61,7 @@ export const findCompatible = (creep: Creep): CreepTask | null => {
   // No available task.
   return null;
 
-}
-
+};
 
 /**
  * Moves the given task from the pending queue to the list of assigned.
@@ -77,7 +76,7 @@ export const moveTaskToAssigned = (task: CreepTask, room: Room) => {
       return;
     }
   }
-}
+};
 
 /**
  * Removes the given task from the assigned tasks list of the given room.
@@ -91,6 +90,4 @@ export const removeTaskFromAssigned = (task: CreepTask, room: Room) => {
       return;
     }
   }
-}
-
-
+};

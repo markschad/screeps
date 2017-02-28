@@ -1,7 +1,7 @@
 import { log } from "../../../support/log";
 import {
   RoutineState,
-  getRoutineMemory
+  getRoutineMemory,
 } from "../routine";
 import * as memoryHelper from "../../../common/memoryHelper";
 
@@ -56,7 +56,6 @@ export const start = (creep: Creep) => {
   }
 
 };
-
 
 /**
  * Main logic for the gather until full routine.

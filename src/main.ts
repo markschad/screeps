@@ -1,5 +1,4 @@
 // import * as CreepManager from "./components/creeps/creepManager";
-import "./components/creeps/roles/roles";
 import * as Config from "./config/config";
 import * as memoryHelper from "./components/common/memoryHelper";
 
@@ -27,6 +26,7 @@ log.info("load");
 for (let name in Game.rooms) {
   let room = Game.rooms[name];
   delete room.memory.creepTaskAssigned;
+  delete room.memory.creepTaskQueue;
 }
 
 _.each(Game.creeps, (creep) => {

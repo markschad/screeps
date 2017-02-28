@@ -3,6 +3,7 @@ import { log } from "../../support/log";
 import * as creepTask from "./creepTask";
 import * as creepTaskQueue from "./creepTaskQueue";
 import * as routine from "./routine";
+import { profiles } from "./profiles/index";
 
 // import * as upgradeController from "./profiles/upgradeController";
 
@@ -22,7 +23,9 @@ export const run = (creep: Creep): void => {
     task = creepTaskQueue.findCompatible(creep);
 
     if (task) {
-      log.debug("Assigning task to creep " + creep.name);
+
+      log.info("Assigning task " + task.name + " to creep " + creep.name);
+
       creepTaskQueue.moveTaskToAssigned(task, creep.room);
 
       creepTaskMemory.task = task;
@@ -34,9 +37,6 @@ export const run = (creep: Creep): void => {
       creepTask.registerInteractions(task);
       creepTask.startRoutine(creep);
 
-    } else {
-      // task = upgradeController.upgradeControllerTaskFactory();
-      // creepTaskQueue.getAssigned(creep.room).push(task);
     }
   }
 
@@ -47,21 +47,14 @@ export const run = (creep: Creep): void => {
     let plan = task.routines[creepTaskMemory.currentRoutine];
     routine.setCurrentRoutineMemory(creep, plan);
 
-    log.debug("Attempting to execute plan " + plan.name + " for creep " + creep.name);
-
     // Execute the current routine for the creep.
     let routineState = creepTask.executeRoutine(creep);
-
-    log.debug("creepTask routine state " + routineState);
 
     // If the creep can't work, restart the task cycle.
     if (routineState === routine.RoutineState.CantWork) {
       creepTaskMemory.currentRoutine = 0;
-    }
     // If the creep is finished, advanced to the next routine.
-    else if (routineState === routine.RoutineState.Done) {
-
-      log.debug("creep routine done.");
+    } else if (routineState === routine.RoutineState.Done) {
 
       creepTaskMemory.currentRoutine++;
 
@@ -69,11 +62,21 @@ export const run = (creep: Creep): void => {
       let len = task.routines.length;
       if (creepTaskMemory.currentRoutine === len) {
 
-        creepTaskQueue.removeTaskFromAssigned(task, creep.room);
-        creepTaskMemory.state = creepTask.CreepTaskState.Idle;
-        creepTaskMemory.task = null;
-        creepTask.unregisterInteractions(task);
-        return;
+        // Check if we can renew the task.
+        let profile = profiles[task.name];
+        if (profile.renew && profile.renew(creep)) {
+          log.info("Renewing task " + task.name + " for " + creep.name);
+          creepTaskMemory.state = creepTask.CreepTaskState.Working;
+          creepTaskMemory.currentRoutine = 0;
+        // Otherwise, unassign the current task.
+      } else {
+          log.info("Completing task " + task.name + " for " + creep.name);
+          creepTaskQueue.removeTaskFromAssigned(task, creep.room);
+          creepTaskMemory.state = creepTask.CreepTaskState.Idle;
+          creepTaskMemory.task = null;
+          creepTask.unregisterInteractions(task);
+          return;
+        }
 
       }
 
@@ -112,4 +115,3 @@ export const cleanupMemory = () => {
   }
 
 };
-

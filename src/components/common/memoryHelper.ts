@@ -1,4 +1,4 @@
-import { log } from "../support/log";
+// import { log } from "../support/log";
 
 /**
  * A representation of a room position that can be stored in memory.
@@ -28,7 +28,6 @@ export const toRoomPosition = (posMem: RoomPositionMemory | undefined): RoomPosi
   if (posMem === undefined) {
     return undefined;
   }
-  log.debug("posMem: " + posMem);
   return new RoomPosition(posMem.x, posMem.y, posMem.room);
 };
 
@@ -66,5 +65,3 @@ export const cleanupMemory = () => {
   }
 
 };
-
-

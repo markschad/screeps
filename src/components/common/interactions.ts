@@ -39,4 +39,3 @@ export const getInteractions = (objectId: string, interaction: string) => {
     return 0;
   }
 };
-

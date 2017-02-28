@@ -22,6 +22,9 @@ export const run = (room: Room) => {
 
 };
 
+/**
+ * Returns a new upgradeController task.
+ */
 export const upgradeControllerTaskFactory = (): creepTask.CreepTask => {
 
   let plan = [

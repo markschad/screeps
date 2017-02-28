@@ -1,7 +1,7 @@
 import { log } from "../../../support/log";
 import {
   RoutineState,
-  getRoutineMemory
+  getRoutineMemory,
 } from "../routine";
 import * as memoryHelper from "../../../common/memoryHelper";
 
@@ -20,8 +20,6 @@ export interface GatherUntilFullRoutineOptions {
  */
 export const start = (creep: Creep) => {
 
-  log.debug("starting routine gatherUntilFull");
-
   let routineMemory = getRoutineMemory(creep);
   let routine = routineMemory.routine;
 
@@ -30,8 +28,6 @@ export const start = (creep: Creep) => {
     let options = routine.options as GatherUntilFullRoutineOptions;
     let energySourceId = options.energySourceId;
     let energySource = Game.getObjectById<Source>(energySourceId);
-
-    log.debug("options.nearestTo: " + options.nearestTo);
 
     if (!energySource) {
       // Find the nearest energy source to the option "nearestTo" or this
@@ -48,27 +44,19 @@ export const start = (creep: Creep) => {
     // Store the energy source id so we don't have to calculate it again.
     routineMemory.cache.energySourceId = energySourceId;
 
-    log.debug("cached energySourceId " + energySourceId);
-
   }
 
-
 };
-
 
 /**
  * Main logic for the gather until full routine.
  */
 export const execute = (creep: Creep): RoutineState => {
 
-  log.debug("Executing routine gatherUntilFull for creep " + creep.name);
-
   let routineMemory = getRoutineMemory(creep);
 
   // Get the memory source from memory.
   let source = Game.getObjectById(routineMemory.cache.energySourceId) as Source;
-
-  log.debug("energySourceId " + routineMemory.cache.energySourceId);
 
   // Attempt to harvest the source.
   let tryHarvest = creep.harvest(source);
@@ -84,7 +72,6 @@ export const execute = (creep: Creep): RoutineState => {
 
     // Complete the routine if we are full.
     case ERR_FULL:
-      log.debug("gatherUntilFull done");
       return routineMemory.state = RoutineState.Done;
 
     // Keep gathering.

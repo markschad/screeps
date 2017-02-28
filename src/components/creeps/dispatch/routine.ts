@@ -6,7 +6,6 @@ export interface Routine {
   execute(creep: Creep): RoutineState;
 }
 
-
 /**
  * Represents the current routine state.
  */

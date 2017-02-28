@@ -1,3 +1,5 @@
+import { log } from "../../../support/log";
+
 import * as interactionsHelper from "../../../common/interactions";
 import * as creepTask from "../creepTask";
 import * as creepTaskQueue from "../creepTaskQueue";
@@ -17,7 +19,10 @@ export const run = (room: Room) => {
       return s.hits / s.hitsMax < REPAIR_THRESHOLD;
     },
   });
+
   let numTasks = creepTaskQueue.getNumQueuedOrActiveWithName(room, TASK_NAME);
+
+  log.info("Repairable structures: " + structures.length);
 
   // Check the number of construct interactions there area gainst this store.
   _.each(structures, (structure: Structure) => {
@@ -56,7 +61,6 @@ export const run = (room: Room) => {
         };
       }
 
-
       let plan = [
         getEnergyRoutine,
         {
@@ -84,4 +88,4 @@ export const run = (room: Room) => {
 
   });
 
-}
+};

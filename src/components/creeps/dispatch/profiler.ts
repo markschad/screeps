@@ -1,7 +1,6 @@
 import { log } from "../../support/log";
 import { profiles } from "./profiles/index";
 
-
 export const throttle = (freq: number): boolean => {
 
   let profilerMemory = Memory.profiler || (Memory.profiler = {});
@@ -16,7 +15,6 @@ export const throttle = (freq: number): boolean => {
 
 };
 
-
 /**
  * Runs each profiler in each room in which we have access.
  */
@@ -26,7 +24,7 @@ export const run = () => {
 
    for (let name in profiles) {
 
-    log.debug("Running profiler " + name);
+    log.info("Running profiler " + name);
 
     let profiler = profiles[name];
     profiler.run(room);

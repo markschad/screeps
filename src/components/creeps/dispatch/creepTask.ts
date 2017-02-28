@@ -111,8 +111,7 @@ export const getCreepTaskMemory = (creep: Creep): CreepTaskMemory => {
     task: null,
   });
 
-}
-
+};
 
 /**
  * Returns an object containing a key for each body part with a value
@@ -130,7 +129,6 @@ export const getBodyConfig = (creep: Creep): BodyConfig => {
  * Returns a body part array of representing the given body config.
  */
 export const toBody = (config: BodyConfig, multiplier: number = 1): string[] => {
-
   let body: string[] = [];
   for (let part in config) {
     _.times(config[part] * multiplier, () => {
@@ -138,8 +136,7 @@ export const toBody = (config: BodyConfig, multiplier: number = 1): string[] => 
     });
   }
   return body;
-
-}
+};
 
 /**
  * Registers interactions for this task.
@@ -147,13 +144,11 @@ export const toBody = (config: BodyConfig, multiplier: number = 1): string[] => 
 export const registerInteractions = (task: CreepTask) => {
   let interactions = task.interactions;
   for (let objectId in interactions) {
-    log.debug("Registering interactions for object " + objectId);
     _.each(interactions[objectId], (interaction) => {
-      log.debug("Registering interaction " + interaction);
       interactionsHelper.registerInteraction(objectId, interaction);
     });
   }
-}
+};
 
 /**
  * Unregisters interactions for this task.
@@ -179,7 +174,14 @@ export const executeRoutine = (creep: Creep): routineHelper.RoutineState => {
   if (plan) {
 
     let routine = routineIndex.routines[plan.name] as routineHelper.Routine;
-    let result = routine.execute(creep);
+
+    let result = routineHelper.RoutineState.Working;
+
+    if (routine) {
+      result = routine.execute(creep);
+    } else {
+      log.debug("Routine " + plan.name + "does not exist.");
+    }
 
     // Clear the cache if we've finished.
     if (result === routineHelper.RoutineState.Done) {
@@ -199,8 +201,6 @@ export const executeRoutine = (creep: Creep): routineHelper.RoutineState => {
  */
 export const startRoutine = (creep: Creep): void => {
 
-  log.debug("startRoutine for creep " + creep.name);
-
   // Start the current routine.
   let routineMemory = routineHelper.getRoutineMemory(creep);
   routineMemory.state = routineHelper.RoutineState.Working;
@@ -214,4 +214,3 @@ export const startRoutine = (creep: Creep): void => {
   }
 
 };
-

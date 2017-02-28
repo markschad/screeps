@@ -1,7 +1,7 @@
 import { log } from "../../../support/log";
 import {
   RoutineState,
-  getRoutineMemory
+  getRoutineMemory,
 } from "../routine";
 import * as memoryHelper from "../../../common/memoryHelper";
 import * as energyHelper from "../../../common/energyHelper";
@@ -52,7 +52,6 @@ export const start = (creep: Creep) => {
 
 };
 
-
 /**
  * Main logic for the gather until full routine.
  */
@@ -90,8 +89,12 @@ export const execute = (creep: Creep): RoutineState => {
     case ERR_FULL:
       return routineMemory.state = RoutineState.Done;
 
+    case OK:
+      // All good.
+      break;
+
     default:
-      log.info(creep.name + ":storeEnergy - Unhandled error: " + tryWithdraw);
+      log.info(creep.name + ":withdrawEnergy - Unhandled error: " + tryWithdraw);
       break;
 
   }

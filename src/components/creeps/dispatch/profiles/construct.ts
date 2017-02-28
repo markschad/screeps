@@ -7,7 +7,7 @@ import * as energyHelper from "../../../common/energyHelper";
 // Max interactions increases by one for
 const RESOURCE_INTERACTION_STEP = 500;
 const TASK_NAME = "construct";
-const MAX_TASKS = 2;
+const MAX_TASKS = 3;
 
 export const run = (room: Room) => {
 
@@ -37,7 +37,7 @@ export const run = (room: Room) => {
         filter: energyHelper.isEnergyStoreWithEnergy,
       });
       let energySource = site.pos.findClosestByRange<Source>(FIND_SOURCES_ACTIVE);
-      if (energyStore && site.pos.getRangeTo(energyStore) < site.pos.getRangeTo(energySource)) {
+      if (energyStore) {
         getEnergyRoutine = {
           name: "withdrawEnergy",
           options: {
@@ -52,7 +52,6 @@ export const run = (room: Room) => {
           },
         };
       }
-
 
       let plan = [
         getEnergyRoutine,
@@ -81,4 +80,23 @@ export const run = (room: Room) => {
 
   });
 
-}
+};
+
+/**
+ * Attempts to renew the current task for the given creep.
+ */
+export const renew = (creep: Creep) => {
+
+  let taskMemory = creepTask.getCreepTaskMemory(creep);
+  let task = taskMemory.task as creepTask.CreepTask;
+  let siteId: string = task.routines[1].options.constructionSiteId;
+  let site = Game.getObjectById<ConstructionSite>(siteId);
+
+  // If the energy store is not full, renew the task.
+  if (site && site.progress < site.progressTotal) {
+    return true;
+  }
+
+  return false;
+
+};

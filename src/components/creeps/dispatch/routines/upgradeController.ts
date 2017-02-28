@@ -1,7 +1,7 @@
-import { log } from "../../../support/log";
+// import { log } from "../../../support/log";
 import {
   RoutineState,
-  getRoutineMemory
+  getRoutineMemory,
 } from "../routine";
 // import * as memoryHelper from "../../../common/memoryHelper";
 
@@ -18,18 +18,12 @@ export const start = (creep: Creep) => {
     pathing.setPathTarget(creep, controller.pos);
   }
 
-  log.debug(creep.name + " upgradeController start");
-  // Nothing to setup.
-
 };
-
 
 /**
  * Main logic for the gather until full routine.
  */
 export const execute = (creep: Creep): RoutineState => {
-
-  log.debug("Executing upgradeController routine.");
 
   let routineMemory = getRoutineMemory(creep);
 

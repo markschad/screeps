@@ -7,7 +7,7 @@ import * as memoryHelper from "../../../common/memoryHelper";
 import * as energyHelper from "../../../common/energyHelper";
 
 const TASK_NAME = "fillExtension";
-const MAX_TASKS = 3;
+const MAX_TASKS = 2;
 const MAX_INTERACTIONS = 1;
 
 export const run = (room: Room) => {
@@ -40,7 +40,7 @@ export const run = (room: Room) => {
         name: string;
         options: {};
       };
-      let energyStore = extension.pos.findClosestByRange<energyHelper.EnergyStore>(FIND_MY_STRUCTURES, {
+      let energyStore = extension.pos.findClosestByRange<energyHelper.EnergyStore>(FIND_STRUCTURES, {
         filter: energyHelper.isEnergyStoreWithEnergy,
       });
       if (energyStore) {
@@ -87,4 +87,4 @@ export const run = (room: Room) => {
 
   });
 
-}
+};

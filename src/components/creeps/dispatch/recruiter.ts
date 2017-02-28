@@ -2,6 +2,9 @@ import { log } from "../../support/log";
 import * as creepTask from "./creepTask";
 import * as creepTaskQueue from "./creepTaskQueue";
 
+const DEFAULT_BODY = [ CARRY, MOVE, WORK ];
+const BODY_MULTIPLIER_START = 3;
+
 /**
  * Attempts to spawn a creep to meet the needs of each task in
  * the given room's queue.
@@ -29,38 +32,54 @@ export const run = (room: Room) => {
 
   while (queueIndex < queueLen && spawnIndex < spawnsLen) {
 
+    // Retrieve the next task in the queue.
     let task = queue[queueIndex++];
     let body: string[] | null = null;
 
     let spawn = spawns[spawnIndex];
+    let creepName: string = "creep0";
 
-    let uuid = Memory.uuid++;
-    let creepName: string = spawn.room.name + ":creep" + uuid;
+    for (let multiplier = BODY_MULTIPLIER_START; multiplier > 0; multiplier--) {
 
-    for (let multiplier = 3; multiplier > 0; multiplier--) {
       let possibleBody: string[];
       if (task.prereq.body) {
         possibleBody = creepTask.toBody(task.prereq.body, multiplier);
       } else {
-        possibleBody = [ CARRY, MOVE, WORK ]; // Basic utility.
+        possibleBody = DEFAULT_BODY;
       }
-      if (!spawn.canCreateCreep(possibleBody, creepName)) {
+
+      // Check if the creep can be created.
+      let canCreate: number = OK;
+      do {
+        creepName = generateCreepName(spawn.room);
+        canCreate = spawn.canCreateCreep(possibleBody, creepName);
+      }
+      while (canCreate === ERR_NAME_EXISTS);
+
+      if (canCreate === OK) {
         body = possibleBody;
         break;
       }
     }
 
+    // If a body has been assigned.
     if (body) {
-      log.debug("creating.");
-      let result = spawn.createCreep(body, creepName, {});
-      if (!result) {
+      let tryCreate = spawn.createCreep(body, creepName, {});
+      if (!tryCreate) {
         spawnIndex++;
-        log.debug("createCreep result " + result);
+        log.info("Spawned new creep " + creepName + " " + body);
       }
     } else {
-      log.debug("Can't create creep for task " + task.name);
+      log.debug("Cannot spawn creep for task " + task.name + ", no body.");
     }
 
   }
 
-}
+};
+
+/**
+ * Generates a new creep name.
+ */
+export const generateCreepName = (room: Room): string => {
+  return room.name + ":creep" + (Memory.uuid++);
+};

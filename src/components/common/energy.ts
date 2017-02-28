@@ -59,29 +59,28 @@ export const isFillableEnergyStore = (structure: Structure) => {
 export const isEnergyStoreWithEnergyFactory = (minEnergy: number = 1): Function => {
   return (s: Structure) => {
     switch (s.structureType) {
-    // case STRUCTURE_SPAWN:
-    case STRUCTURE_EXTENSION:
-      let energyStore = s as EnergyStore;
-      if ((<OwnedStructure> s).my && energyStore.energy >= minEnergy) {
-        return true;
-      } else {
+      // case STRUCTURE_SPAWN:
+      case STRUCTURE_EXTENSION:
+        let energyStore = s as EnergyStore;
+        if ((<OwnedStructure> s).my && energyStore.energy >= minEnergy) {
+          return true;
+        } else {
+          return false;
+        }
+
+      case STRUCTURE_CONTAINER:
+        let container = s as StructureContainer;
+        if (container.store[RESOURCE_ENERGY] >= minEnergy) {
+          return true;
+        } else {
+          return false;
+        }
+
+      default:
         return false;
-      }
-
-    case STRUCTURE_CONTAINER:
-      let container = s as StructureContainer;
-      if (container.store[RESOURCE_ENERGY] >= minEnergy) {
-        return true;
-      } else {
-        return false;
-      }
-
-    default:
-      return false;
-  }
-  }
-}
-
+    }
+  };
+};
 
 /**
  * Retrieves the nearest energy store which is not full.
@@ -115,6 +114,3 @@ export const findNearestEnergyStoreWithEnergy =
     filter: isEnergyStoreWithEnergyFactory(minEnergy),
   }) as EnergyStore;
 };
-
-
-

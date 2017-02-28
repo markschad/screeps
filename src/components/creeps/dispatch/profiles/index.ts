@@ -4,10 +4,17 @@ import * as _upgradeController from "./upgradeController";
 import * as _fillExtension from "./fillExtension";
 import * as _repair from "./repair";
 
+/**
+ * Represents a room profiler with a run method.
+ */
 export interface Profiler {
   run(room: Room): void;
+  renew?(creep: Creep): void;
 }
 
+/**
+ * A dictionary of all profilers.
+ */
 export const profiles: { [name: string]: Profiler } = {
 
   construct: _construct,
@@ -18,6 +25,6 @@ export const profiles: { [name: string]: Profiler } = {
 
   repair:  _repair,
 
-  upgradeCotnroller: _upgradeController,
+  upgradeController: _upgradeController,
 
 };

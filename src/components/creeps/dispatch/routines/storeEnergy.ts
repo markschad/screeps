@@ -1,13 +1,12 @@
 import { log } from "../../../support/log";
 import {
   RoutineState,
-  getRoutineMemory
+  getRoutineMemory,
 } from "../routine";
 import * as memoryHelper from "../../../common/memoryHelper";
 import * as energyHelper from "../../../common/energy";
 
 import * as pathing from "../../pathing";
-
 
 /**
  * Represents the portion of memory dedicated to the gatherUntilFullRoutine.
@@ -51,7 +50,6 @@ export const start = (creep: Creep) => {
 
 };
 
-
 /**
  * Main logic for the gather until full routine.
  */
@@ -71,14 +69,16 @@ export const execute = (creep: Creep): RoutineState => {
 
     // Move towards the energy store if we are out-of-range.
     case ERR_NOT_IN_RANGE:
-      log.debug("moving to energy store " + energyStoreId);
-      // creep.moveTo(store);
       pathing.executePath(creep);
       break;
 
     // Complete the routine if we are empty.
     case ERR_NOT_ENOUGH_RESOURCES:
       return routineMemory.state = RoutineState.Done;
+
+    case OK:
+      // Press on.
+      break;
 
     default:
       log.debug(creep.name + ":storeEnergy - Unhandled error: " + tryStore);

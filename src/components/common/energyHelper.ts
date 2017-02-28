@@ -5,7 +5,7 @@
  */
 export interface EnergyStore extends Structure {
   store: { [resource: string]: number };
-  capacity: number;
+  storeCapacity: number;
 };
 
 /**
@@ -33,7 +33,7 @@ export const isEnergyStoreWithEnergy = (structure: Structure) => {
 export const isFillableEnergyStore = (structure: Structure) => {
   if (isEnergyStore(structure)) {
     let energyStore = structure as EnergyStore;
-    return _.sum(energyStore.store) < energyStore.capacity;
+    return _.sum(energyStore.store) < energyStore.storeCapacity;
   }
   return false;
 };
