@@ -88,4 +88,3 @@ export const renew = (creep: Creep) => {
   return false;
 
 };
-

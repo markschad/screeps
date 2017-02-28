@@ -55,6 +55,12 @@ export const execute = (creep: Creep): RoutineState => {
 
   let routineMemory = getRoutineMemory(creep);
 
+  // If we're full, finish the routine.
+  if (_.sum(creep.carry) === creep.carryCapacity) {
+    log.debug("gatherUntilFull done");
+    return routineMemory.state = RoutineState.Done;
+  }
+
   // Get the memory source from memory.
   let source = Game.getObjectById(routineMemory.cache.energySourceId) as Source;
 

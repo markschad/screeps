@@ -33,10 +33,10 @@ export const run = (room: Room) => {
         name: string;
         options: {};
       };
-      let energyStore = site.pos.findClosestByRange<energyHelper.EnergyStore>(FIND_MY_STRUCTURES, {
+      let energyStore = site.pos.findClosestByPath<energyHelper.EnergyStore>(FIND_STRUCTURES, {
         filter: energyHelper.isEnergyStoreWithEnergy,
       });
-      let energySource = site.pos.findClosestByRange<Source>(FIND_SOURCES_ACTIVE);
+      let energySource = site.pos.findClosestByPath<Source>(FIND_SOURCES_ACTIVE);
       if (energyStore) {
         getEnergyRoutine = {
           name: "withdrawEnergy",

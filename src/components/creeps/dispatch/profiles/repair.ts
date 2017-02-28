@@ -8,7 +8,7 @@ import * as energyHelper from "../../../common/energyHelper";
 
 // Max interactions increases by one for
 const TASK_NAME = "repair";
-const MAX_TASKS = 1;
+const MAX_TASKS = 3;
 const MAX_INTERACTIONS = 1;
 const REPAIR_THRESHOLD = 0.3;
 

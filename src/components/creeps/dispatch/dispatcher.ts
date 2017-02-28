@@ -108,7 +108,9 @@ export const cleanupMemory = () => {
         creepTask.registerInteractions(task);
         tmp.push(task);
       } else {
-        log.debug("Removing dead task " + task.name);
+        log.debug("Requeueing dead task " + task.name);
+        task.assignedTo = null;
+        roomMemory.creepTaskQueue.splice(0, 1, task);
       }
     });
     roomMemory.creepTaskAssigned = tmp;

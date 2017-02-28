@@ -8,6 +8,11 @@ export interface EnergyStore extends Structure {
   storeCapacity: number;
 };
 
+export interface EnergyUser extends Structure {
+  energy: number;
+  energyCapacity: number;
+}
+
 /**
  * Returns true if the given structure is an energy store.
  */
@@ -36,4 +41,12 @@ export const isFillableEnergyStore = (structure: Structure) => {
     return _.sum(energyStore.store) < energyStore.storeCapacity;
   }
   return false;
+};
+
+/**
+ * Returns true if the given structure is an energy user.
+ */
+export const isEnergyUser = (structure: Structure) => {
+  return structure.structureType === STRUCTURE_SPAWN ||
+    structure.structureType === STRUCTURE_EXTENSION;
 };

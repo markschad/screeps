@@ -42,8 +42,13 @@ export const execute = (creep: Creep): RoutineState => {
         pathing.executePath(creep);
         break;
 
-      default:
+      // Finish when there is no more energy.
+      case ERR_NOT_ENOUGH_RESOURCES:
         return routineMemory.state = RoutineState.Done;
+
+      case OK:
+      default:
+        return routineMemory.state = RoutineState.Working;
 
     }
 

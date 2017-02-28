@@ -7,16 +7,20 @@ import * as memoryHelper from "../../../common/memoryHelper";
 import * as energyHelper from "../../../common/energyHelper";
 
 const TASK_NAME = "fillExtension";
-const MAX_TASKS = 2;
+const MAX_TASKS = 3;
 const MAX_INTERACTIONS = 1;
 
 export const run = (room: Room) => {
 
-  let extensions = room.find(FIND_MY_STRUCTURES, {
+  let energyUsers = room.find(FIND_MY_STRUCTURES, {
     filter: (structure: Structure) => {
-      if (structure.structureType === STRUCTURE_EXTENSION) {
-        let extension = structure as Extension;
-        return extension.energy < extension.energyCapacity;
+      if (energyHelper.isEnergyUser(structure)) {
+        let energyUser = structure as energyHelper.EnergyUser;
+        if (energyUser) {
+          return energyUser.energy < energyUser.energyCapacity;
+        } else {
+          return false;
+        }
       }
     },
   });
@@ -24,7 +28,7 @@ export const run = (room: Room) => {
   let numTasks = creepTaskQueue.getNumQueuedOrActiveWithName(room, TASK_NAME);
 
   // Check the number of storeEnergy interactions there are against this energy store.
-  _.each(extensions, (extension: StructureExtension) => {
+  _.each(energyUsers, (energyUser: energyHelper.EnergyUser) => {
 
     if (numTasks >= MAX_TASKS) {
       return true;
@@ -32,7 +36,7 @@ export const run = (room: Room) => {
 
     // If the number of interactions is less than the max, add a new task.
     let canEnqueue = numTasks < MAX_TASKS &&
-      interactionsHelper.getInteractions(extension.id, "storeEnergy") < MAX_INTERACTIONS;
+      interactionsHelper.getInteractions(energyUser.id, "storeEnergy") < MAX_INTERACTIONS;
 
     if (canEnqueue) {
 
@@ -40,7 +44,7 @@ export const run = (room: Room) => {
         name: string;
         options: {};
       };
-      let energyStore = extension.pos.findClosestByRange<energyHelper.EnergyStore>(FIND_STRUCTURES, {
+      let energyStore = energyUser.pos.findClosestByRange<energyHelper.EnergyStore>(FIND_STRUCTURES, {
         filter: energyHelper.isEnergyStoreWithEnergy,
       });
       if (energyStore) {
@@ -54,7 +58,7 @@ export const run = (room: Room) => {
         getEnergyRoutine = {
           name: "gatherUntilFull",
           options: {
-            nearestTo: memoryHelper.toRoomPositionMemory(extension.pos),
+            nearestTo: memoryHelper.toRoomPositionMemory(energyUser.pos),
           },
         };
       }
@@ -64,13 +68,13 @@ export const run = (room: Room) => {
         {
           name: "storeEnergy",
           options: {
-            energyStoreId: extension.id,
+            energyStoreId: energyUser.id,
           },
         },
       ];
 
       let interactions: creepTask.CreepTaskInteractions = { };
-      interactions[extension.id] = [ "storeEnergy" ];
+      interactions[energyUser.id] = [ "storeEnergy" ];
 
       let prereq: { body: creepTask.BodyConfig } = { body: {} };
       prereq.body[CARRY] = 1;
