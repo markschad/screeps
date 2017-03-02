@@ -37,3 +37,25 @@ export const isFillableEnergyStore = (structure: Structure) => {
   }
   return false;
 };
+
+/**
+ * Returns the current amount of energy in this structure or zero if the structure does not hold
+ * energy.
+ *
+ * @param structure The structure for which to get the energy amount.
+ */
+export const getEnergy = (structure: Structure): number => {
+  let s = structure as any;
+  return s.energy || s.store[RESOURCE_ENERGY] || 0;
+};
+
+/**
+ * Returns the energy capacity for the given structure or zero if the structure does not hold
+ * energy.
+ *
+ * @param structure The structure for which to get the energy capacity.
+ */
+export const getEnergyCapacity = (structure: Structure) => {
+  let s = structure as any;
+  return s.energyCapacity || s.storeCapacity || 0;
+};

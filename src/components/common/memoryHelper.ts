@@ -24,9 +24,9 @@ export const toRoomPositionMemory = (pos: RoomPosition): RoomPositionMemory => {
 /**
  * Returns a room position from a room position memory object.
  */
-export const toRoomPosition = (posMem: RoomPositionMemory | undefined): RoomPosition | undefined => {
-  if (posMem === undefined) {
-    return undefined;
+export const toRoomPosition = (posMem: RoomPositionMemory | undefined): RoomPosition | null => {
+  if (!posMem) {
+    return null;
   }
   return new RoomPosition(posMem.x, posMem.y, posMem.room);
 };

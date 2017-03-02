@@ -5,7 +5,7 @@ import * as creepTaskQueue from "../creepTaskQueue";
 
 // Max interactions increases by one for
 const TASK_NAME = "upgradeController";
-const MAX_TASKS = 1;
+const MAX_TASKS = 4;
 
 export const run = (room: Room) => {
 
